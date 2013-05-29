@@ -37,7 +37,8 @@ module Locu
                 when 'ITEM'
                   option_groups = subsection_content['option_groups'].collect do |option_group|
                     options = option_group['options'].collect do |option|
-                      MenuOption.new option['name'], Float(option['price'])
+                      price = option['price'] || 0
+                      MenuOption.new option['name'], Float(price)
                     end
                     MenuOptionGroup.new option_group['text'], option_group['type'].downcase.to_sym, options
                   end
