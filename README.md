@@ -17,8 +17,14 @@ Or install it yourself as:
     $ gem install locu
 
 ## Usage
+Create a config/initializer/locu.rb file with the following:
+$ LOCU = Locu::Base.new 'YOUR API KEY HERE'
 
-TODO: Write usage instructions here
+Find a venue:
+$ LOCU.venues.find('9cd2508687bbb3ff6a49')
+
+Search for a venue:
+$ LOCU.venues.search(name: 'farm:table')
 
 ## Contributing
 
@@ -28,3 +34,8 @@ TODO: Write usage instructions here
 4. Push to the branch (`git push origin my-new-feature`)
 5. Create new Pull Request
 
+## Running specs:
+Create a spec/api_key.rb file.  Add the following to it:
+$ SPEC_API_KEY = "YOUR LOCU API KEY"
+
+$ rspec spec
