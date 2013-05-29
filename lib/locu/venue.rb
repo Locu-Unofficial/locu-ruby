@@ -10,7 +10,6 @@ module Locu
       venue.name = body['name']
       venue.website_url = body['website_url']
       venue.has_menu = body['has_menu']
-      venue.last_updated = body['last_updated'] ? DateTime.parse(body['last_updated']) : nil
       venue.resource_uri = body['resource_uri']
       venue.street_address = body['street_address']
       venue.locality = body['locality']
@@ -37,11 +36,14 @@ module Locu
                 when 'ITEM'
                   option_groups = subsection_content['option_groups'].collect do |option_group|
                     options = option_group['options'].collect do |option|
-                      MenuOption.new option['name'], Float(option['price'])
+                      price = Money.parse(option['price'])
+                      MenuOption.new option['name'], price
                     end
                     MenuOptionGroup.new option_group['text'], option_group['type'].downcase.to_sym, options
                   end
-                  item = MenuItem.new(subsection_content['name'], subsection_content['description'], option_groups, Float(subsection_content['price']))
+
+                  price = Money.parse(subsection_content['price'])
+                  item = MenuItem.new(subsection_content['name'], subsection_content['description'], option_groups, price)
                   subsection_items << item
                 end
 
