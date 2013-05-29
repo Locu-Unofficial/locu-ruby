@@ -111,6 +111,7 @@ describe Locu::Venue, vcr: { match_requests_on: [:host] } do
       let(:invalid_venue_id) { 'badbadbad' }
 
       it 'should return nil' do
+        stub_request(:get, "http://api.locu.com/v1_0/venue/badbadbad/?api_key=SPEC_API_KEY&format=json").to_return(:status => 404)
         locu.venues.find(invalid_venue_id).should be_nil
       end
     end
@@ -144,20 +145,20 @@ describe Locu::Venue, vcr: { match_requests_on: [:host] } do
     describe 'with a location' do
       describe 'which is valid' do
         let(:location) { [33.45504, -112.07102] }
+
+        it 'should return some results' do
           venues = locu.venues.search(location: location)
           meta = venues.meta
           meta.should be_kind_of Locu::VenueSearchMetadata
           meta.cache_expiry.should eql 3600
           meta.limit.should eql 25
           meta.next.should be_nil
-          meta.offset.should eql 0
           meta.previous.should be_nil
-          meta.total_count.should eql 2
 
-          venues.should have(2).items
+          venues.should have(25).items
           venue_1 = venues.first
           venue_1.should be_kind_of Locu::Venue
-          venue_1.name.should eql 'The Breadfruit & Rum Bar'
+          venue_1.name.should eql 'The Breadfruit'
           venue_1.has_menu.should be_true
           venue_1.menus.should be_empty
         end

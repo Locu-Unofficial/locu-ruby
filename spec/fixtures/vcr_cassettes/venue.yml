@@ -2351,4 +2351,173 @@ http_interactions:
         Y29tLyJ9XX0p
     http_version: 
   recorded_at: Wed, 29 May 2013 18:24:51 GMT
+- request:
+    method: get
+    uri: http://api.locu.com/v1_0/venue/search/?api_key=e01873467754bb530486199e401ecd8909ab18cd&format=json&location=33.45504,-112.07102
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - '*/*'
+      User-Agent:
+      - Ruby
+      Host:
+      - api.locu.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Wed, 29 May 2013 23:50:34 GMT
+      P3p:
+      - P3P:policyref="/w3c/p3p.xml", CP="DC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi
+        CONi HIS OUR IND CNT"
+      Server:
+      - Apache/2.2.17 (Ubuntu)
+      Vary:
+      - Cookie
+      Content-Length:
+      - '10501'
+      Connection:
+      - keep-alive
+    body:
+      encoding: UTF-8
+      string: '{"meta": {"cache-expiry": 3600, "limit": 25}, "objects": [{"categories":
+        ["active life"], "country": "United States", "cuisines": ["caribbean"], "has_menu":
+        true, "id": "8cc455cdf4f61a6e73e2", "lat": 33.455572, "locality": "Phoenix",
+        "long": -112.072022, "name": "The Breadfruit", "phone": "(602) 267-1266",
+        "postal_code": "85004", "region": "AZ", "resource_uri": "/v1_0/venue/8cc455cdf4f61a6e73e2/",
+        "street_address": "108 E. Pierce St.", "website_url": "http://www.thebreadfruit.com"},
+        {"categories": [], "country": "United States", "cuisines": [], "has_menu":
+        false, "id": "a89f80c56973abd6ae94", "lat": 33.4560034149197, "locality":
+        "Phoenix", "long": -112.072051118546, "name": "squash blossom", "phone": "(602)
+        253-4606", "postal_code": "85004", "region": "AZ", "resource_uri": "/v1_0/venue/a89f80c56973abd6ae94/",
+        "street_address": "705 N. 1st St., #110", "website_url": "http://www.squashblossomaz.com"},
+        {"categories": ["restaurant"], "country": "United States", "cuisines": ["japanese",
+        "tapas", "thai", "asian", "bar / pub / brewery"], "has_menu": true, "id":
+        "6c6d6107845df9598ca4", "lat": 33.455685, "locality": "Phoenix", "long": -112.072398,
+        "name": "Sens Asian Tapas and Sake Bar", "phone": "(602) 340-9777", "postal_code":
+        "85004", "region": "AZ", "resource_uri": "/v1_0/venue/6c6d6107845df9598ca4/",
+        "street_address": "705 N. 1st St.", "website_url": "http://www.sensake.com/"},
+        {"categories": [], "country": "United States", "cuisines": [], "has_menu":
+        false, "id": "bc7cae47b93ed4862cda", "lat": 33.4537421449642, "locality":
+        "Phoenix", "long": -112.070599794388, "name": "ASU Kitchen Cafe", "phone":
+        null, "postal_code": "85004", "region": "AZ", "resource_uri": "/v1_0/venue/bc7cae47b93ed4862cda/",
+        "street_address": "500 N. 3rd St.", "website_url": ""}, {"categories": ["restaurant"],
+        "country": "United States", "cuisines": ["fast food", "pizza"], "has_menu":
+        true, "id": "9dc5cd24f9f349b43ca3", "lat": 33.455669, "locality": "Phoenix",
+        "long": -112.072546, "name": "Pizza Hut", "phone": "(602) 229-1133", "postal_code":
+        "85004", "region": "AZ", "resource_uri": "/v1_0/venue/9dc5cd24f9f349b43ca3/",
+        "street_address": "702 N. 1st St.", "website_url": "http://www.pizzahut.com/locations/arizona/phoenix/026999"},
+        {"categories": ["restaurant"], "country": "United States", "cuisines": ["irish"],
+        "has_menu": true, "id": "9cd2508687bbb3ff6a49", "lat": 33.455863, "locality":
+        "Phoenix", "long": -112.07243357, "name": "The Turf Restaurant and Pub", "phone":
+        "(602) 296-5043", "postal_code": "85004", "region": "AZ", "resource_uri":
+        "/v1_0/venue/9cd2508687bbb3ff6a49/", "street_address": "705 N. 1st St.", "website_url":
+        "http://theturfpub.com"}, {"categories": ["active life"], "country": "United
+        States", "cuisines": ["sushi", "japanese"], "has_menu": true, "id": "72d2b28df0269a3937c8",
+        "lat": 33.456419, "locality": "Phoenix", "long": -112.07043, "name": "MOIRA
+        Sushi Bar & Kitchen", "phone": "(602) 254-5085", "postal_code": "85004", "region":
+        "AZ", "resource_uri": "/v1_0/venue/72d2b28df0269a3937c8/", "street_address":
+        "215 East Mckinley St.", "website_url": "http://moirasushi.com/"}, {"categories":
+        ["hair care"], "country": "United States", "cuisines": [], "has_menu": false,
+        "id": "af91727deee220c7dfbd", "lat": 33.454892, "locality": "Phoenix", "long":
+        -112.069157, "name": "Medusa Hair Lounge", "phone": "(602) 334-3601", "postal_code":
+        "85004", "region": "AZ", "resource_uri": "/v1_0/venue/af91727deee220c7dfbd/",
+        "street_address": "600 North 4th St. #146", "website_url": "http://"}, {"categories":
+        [], "country": "United States", "cuisines": [], "has_menu": false, "id": "14caaa7cc8c02cc56ad9",
+        "lat": 33.4538555644893, "locality": "Phoenix", "long": -112.072278171176,
+        "name": "After Hours Coffee House", "phone": null, "postal_code": "85004",
+        "region": "AZ", "resource_uri": "/v1_0/venue/14caaa7cc8c02cc56ad9/", "street_address":
+        "120 E. Taylor St.", "website_url": ""}, {"categories": ["active life"], "country":
+        "United States", "cuisines": [], "has_menu": false, "id": "6df112f77dd17ffd673e",
+        "lat": 33.453796, "locality": "Phoenix", "long": -112.072267, "name": "Taylor
+        Place Dining Hall", "phone": "(602) 496-6711", "postal_code": "85004", "region":
+        "AZ", "resource_uri": "/v1_0/venue/6df112f77dd17ffd673e/", "street_address":
+        "120 E. Taylor St.", "website_url": "http://www.asu-taylorplace.com/"}, {"categories":
+        ["restaurant"], "country": "United States", "cuisines": ["coffee / tea"],
+        "has_menu": false, "id": "de28e45e98034a617b4c", "lat": 33.45356, "locality":
+        "Phoenix", "long": -112.072032, "name": "Starbucks", "phone": "(800) 782-7282",
+        "postal_code": "85004", "region": "AZ", "resource_uri": "/v1_0/venue/de28e45e98034a617b4c/",
+        "street_address": "120 E. Taylor St.", "website_url": "http://www.starbucks.com/"},
+        {"categories": ["restaurant"], "country": "United States", "cuisines": [],
+        "has_menu": false, "id": "b2e1860b823bebfc2b16", "lat": 33.453568, "locality":
+        "Phoenix", "long": -112.072277, "name": "Hsin Cafe", "phone": "(602) 254-6337",
+        "postal_code": "85004", "region": "AZ", "resource_uri": "/v1_0/venue/b2e1860b823bebfc2b16/",
+        "street_address": "120 East Taylor St. #150", "website_url": "http://www.facebook.com/pages/HSIN-CAFE/223081838239?ref=nf"},
+        {"categories": ["restaurant"], "country": "United States", "cuisines": [],
+        "has_menu": false, "id": "7e2bbbdda94318132b97", "lat": 33.45676, "locality":
+        "Phoenix", "long": -112.070272564888, "name": "Roosevelt Tavern", "phone":
+        "(602) 254-2561", "postal_code": "85004", "region": "AZ", "resource_uri":
+        "/v1_0/venue/7e2bbbdda94318132b97/", "street_address": "816 N. 3rd St.", "website_url":
+        "http://theroosevelttavern.cfm"}, {"categories": ["active life"], "country":
+        "United States", "cuisines": ["vegetarian", "asian"], "has_menu": true, "id":
+        "128072ddaa96e2a2bd79", "lat": 33.4554966020486, "locality": "Phoenix", "long":
+        -112.073185443878, "name": "SATAY HUT", "phone": "(623) 252-5248", "postal_code":
+        "85004", "region": "AZ", "resource_uri": "/v1_0/venue/128072ddaa96e2a2bd79/",
+        "street_address": "Moving Target!", "website_url": "http://www.satayhutaz.com"},
+        {"categories": [], "country": "United States", "cuisines": [], "has_menu":
+        false, "id": "a9491848a3cb96597ab9", "lat": 33.4565643, "locality": "Phoenix",
+        "long": -112.0695547, "name": "S and S Floral Wholesale", "phone": "(623)
+        336-7784", "postal_code": "85004", "region": "AZ", "resource_uri": "/v1_0/venue/a9491848a3cb96597ab9/",
+        "street_address": "333 E. Mckinley St.", "website_url": "http://ssfloral.com"},
+        {"categories": [], "country": "United States", "cuisines": [], "has_menu":
+        false, "id": "6acd9689b38f86706128", "lat": 33.457108, "locality": "Phoenix",
+        "long": -112.071082, "name": "FilmBar", "phone": "(602) 595-9187", "postal_code":
+        "85004", "region": "AZ", "resource_uri": "/v1_0/venue/6acd9689b38f86706128/",
+        "street_address": "815 North 2nd St.", "website_url": "http://thefilmbarphx.com/"},
+        {"categories": [], "country": "United States", "cuisines": [], "has_menu":
+        false, "id": "170ab04b8c714d40f8b9", "lat": 33.453098, "locality": "Phoenix",
+        "long": -112.069971, "name": "My Pal Joey", "phone": "(602) 424-5639", "postal_code":
+        "85004", "region": "AZ", "resource_uri": "/v1_0/venue/170ab04b8c714d40f8b9/",
+        "street_address": "455 N. 3rd St.", "website_url": "http://www.mypaljoeys.com"},
+        {"categories": [], "country": "United States", "cuisines": [], "has_menu":
+        false, "id": "31277db45b9fddfba6ad", "lat": 33.4530375653833, "locality":
+        "Phoenix", "long": -112.071952146881, "name": "ASU Devil''s Greens", "phone":
+        "(480) 965-3464", "postal_code": "85004", "region": "AZ", "resource_uri":
+        "/v1_0/venue/31277db45b9fddfba6ad/", "street_address": "206 E. Taylor St.",
+        "website_url": ""}, {"categories": [], "country": "United States", "cuisines":
+        [], "has_menu": false, "id": "e8d20a4c2f77904b7cc4", "lat": 33.455856, "locality":
+        "Phoenix", "long": -112.073404, "name": "Pizza people", "phone": null, "postal_code":
+        "85004", "region": "AZ", "resource_uri": "/v1_0/venue/e8d20a4c2f77904b7cc4/",
+        "street_address": "", "website_url": ""}, {"categories": [], "country": "United
+        States", "cuisines": [], "has_menu": false, "id": "fd37afc4f4847be69e49",
+        "lat": 33.4557894227908, "locality": "Phoenix", "long": -112.073483296327,
+        "name": "Food Truck Friday", "phone": null, "postal_code": "85004", "region":
+        "AZ", "resource_uri": "/v1_0/venue/fd37afc4f4847be69e49/", "street_address":
+        "701-799 N. Central Ave.", "website_url": ""}, {"categories": [], "country":
+        "United States", "cuisines": [], "has_menu": false, "id": "4396c1fabb456991edfd",
+        "lat": 33.453814, "locality": "Phoenix", "long": -112.073239, "name": "Sbarro",
+        "phone": "(602) 258-0035", "postal_code": "85004", "region": "AZ", "resource_uri":
+        "/v1_0/venue/4396c1fabb456991edfd/", "street_address": "555 N. Central Ave.",
+        "website_url": "http://www.sbarro.com"}, {"categories": ["restaurant"], "country":
+        "United States", "cuisines": ["american", "mediterranean"], "has_menu": true,
+        "id": "d74247fd405b54264e09", "lat": 33.453814, "locality": "Phoenix", "long":
+        -112.073239, "name": "Bowl Of Greens", "phone": "(602) 795-9710", "postal_code":
+        "85004", "region": "AZ", "resource_uri": "/v1_0/venue/d74247fd405b54264e09/",
+        "street_address": "555 North Central Ave.", "website_url": "http://www.bowlofgreens.com/"},
+        {"categories": [], "country": "United States", "cuisines": [], "has_menu":
+        false, "id": "2f43349a1437950e74c6", "lat": 33.452995, "locality": "Phoenix",
+        "long": -112.06995, "name": "Bento Bar", "phone": "(602) 462-5520", "postal_code":
+        "85004", "region": "AZ", "resource_uri": "/v1_0/venue/2f43349a1437950e74c6/",
+        "street_address": "455 N. 3rd St. Ste 218", "website_url": ""}, {"categories":
+        ["restaurant"], "country": "United States", "cuisines": ["american", "coffee
+        / tea"], "has_menu": true, "id": "4148ed114813de00b8b6", "lat": 33.452978,
+        "locality": "Phoenix", "long": -112.069926, "name": "Starbucks", "phone":
+        "(602) 258-8472", "postal_code": "85004", "region": "AZ", "resource_uri":
+        "/v1_0/venue/4148ed114813de00b8b6/", "street_address": "455 N. 3rd St.", "website_url":
+        "http://www.starbucks.com/"}, {"categories": ["active life"], "country": "United
+        States", "cuisines": [], "has_menu": false, "id": "1a9fd26a75fbd45ec070",
+        "lat": 33.455664, "locality": "Phoenix", "long": -112.073631, "name": "Royal
+        Coffee Bar", "phone": "(602) 254-5466", "postal_code": "85004", "region":
+        "AZ", "resource_uri": "/v1_0/venue/1a9fd26a75fbd45ec070/", "street_address":
+        "14 East Pierce St.", "website_url": "http://www.royalcoffeebar.com/"}]}'
+    http_version: 
+  recorded_at: Wed, 29 May 2013 23:50:35 GMT
 recorded_with: VCR 2.5.0
