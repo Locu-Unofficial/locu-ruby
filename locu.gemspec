@@ -15,7 +15,12 @@ Gem::Specification.new do |gem|
   gem.require_paths = ["lib"]
   gem.version       = Locu::Ruby::VERSION
 
+  gem.add_dependency "money"
+
   gem.add_development_dependency "rspec"
   gem.add_development_dependency "webmock"
+  gem.add_development_dependency "vcr"
+  gem.add_development_dependency "debugger"
+  gem.add_development_dependency "awesome_print"
 end
 
