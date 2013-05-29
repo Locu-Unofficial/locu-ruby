@@ -18,13 +18,16 @@ Or install it yourself as:
 
 ## Usage
 Create a config/initializer/locu.rb file with the following:
-$ LOCU = Locu::Base.new 'YOUR API KEY HERE'
+    
+    $ LOCU = Locu::Base.new 'YOUR API KEY HERE'
 
 Find a venue:
-$ LOCU.venues.find('9cd2508687bbb3ff6a49')
+    
+    $ LOCU.venues.find('9cd2508687bbb3ff6a49')
 
 Search for a venue:
-$ LOCU.venues.search(name: 'farm:table')
+    
+    $ LOCU.venues.search(name: 'farm:table')
 
 ## Contributing
 
@@ -36,6 +39,9 @@ $ LOCU.venues.search(name: 'farm:table')
 
 ## Running specs:
 Create a spec/api_key.rb file.  Add the following to it:
-$ SPEC_API_KEY = "YOUR LOCU API KEY"
+    
+    $ SPEC_API_KEY = "YOUR LOCU API KEY"
 
-$ rspec spec
+Run your tests
+    
+    $ rspec spec
