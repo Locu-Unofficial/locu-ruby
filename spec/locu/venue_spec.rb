@@ -103,9 +103,7 @@ describe Locu::Venue, vcr: { match_requests_on: [:host] } do
           ['Saturday', 'Sunday'].each do |dow|
             venue.open_hours[dow].should be_empty
           end
-
         end
-
       end
     end
 
@@ -113,96 +111,15 @@ describe Locu::Venue, vcr: { match_requests_on: [:host] } do
       let(:invalid_venue_id) { 'badbadbad' }
 
       it 'should return nil' do
-        stub_request(:get, "http://api.locu.com/v1_0/venue/badbadbad/?api_key=SPEC_API_KEY&format=json").to_return(:status => 404)
         locu.venues.find(invalid_venue_id).should be_nil
       end
     end
 
     describe 'multiple venue ids' do
-
       let(:valid_venue_ids) { ['eb5f4e0484ed1947e31a', '9cd2508687bbb3ff6a49'] }
       let(:invalid_venue_ids) { ['definitelynotvalid'] }
 
       it 'should return valid venues' do
-        stub_request(:get,
-          "http://api.locu.com/v1_0/venue/eb5f4e0484ed1947e31a;9cd2508687bbb3ff6a49;definitelynotvalid/?api_key=SPEC_API_KEY&format=json"
-          ).to_return(:body => <<-BODY)
-          {
-            "meta": {
-                "cache-expiry": 3600
-            },
-            "not_found": [
-                "definitelynotvalid"
-            ],
-            "objects": [
-            {
-              "categories": "['restaurant']",
-              "country": "United States",
-              "cuisines": "['steakhouse / grill']",
-              "facebook_url": "",
-              "factual_id": null,
-              "has_menu": true,
-              "id": "9cd2508687bbb3ff6a49",
-              "last_updated": "2012-07-20T13:59:15",
-              "lat": 33.455863,
-              "locality": "Phoenix",
-              "long": -112.072167,
-              "menus": [],
-              "name": "Frank Murray's Turf Irish Pub",
-              "open_hours": {
-                  "Friday": [],
-                  "Monday": [],
-                  "Saturday": [],
-                  "Sunday": [],
-                  "Thursday": [],
-                  "Tuesday": [],
-                  "Wednesday": []
-              },
-              "postal_code": "85004",
-              "redirected_from": null,
-              "region": "AZ",
-              "resource_uri": "/v1_0/venue/9cd2508687bbb3ff6a49/",
-              "similar_venues": null,
-              "street_address": "705 North 1st St.",
-              "twitter_id": "",
-              "website_url": "http://turfirishpub.com/"
-            },
-                {
-                    "categories": "[]",
-                    "country": "United States",
-                    "cuisines": "[]",
-                    "facebook_url": "",
-                    "factual_id": "7ad7ef72-0767-4985-8bd8-16acfe19d279",
-                    "has_menu": false,
-                    "id": "eb5f4e0484ed1947e31a",
-                    "last_updated": "2012-05-29T04:32:50",
-                    "lat": 33.577686,
-                    "locality": "Lubbock",
-                    "long": -101.858613,
-                    "menus": [],
-                    "name": "Villa's Breakfast & Mexican",
-                    "open_hours": {
-                        "Friday": [],
-                        "Monday": [],
-                        "Saturday": [],
-                        "Sunday": [],
-                        "Thursday": [],
-                        "Tuesday": [],
-                        "Wednesday": []
-                    },
-                    "postal_code": "79401",
-                    "redirected_from": null,
-                    "region": "TX",
-                    "resource_uri": "/v1_0/venue/eb5f4e0484ed1947e31a/",
-                    "similar_venues": null,
-                    "street_address": "1925 19th St.",
-                    "twitter_id": "",
-                    "website_url": ""
-                }
-            ]
-          }
-        BODY
-
         venues = locu.venues.find(valid_venue_ids + invalid_venue_ids)
         venues.count.should eql valid_venue_ids.count
         venues.each{ |v| v.should be_kind_of Locu::Venue }
@@ -213,116 +130,20 @@ describe Locu::Venue, vcr: { match_requests_on: [:host] } do
         let(:venue_id) { 'b81a229014d67cca4dd8' }
 
         it 'should return a Venue' do
-          stub_request(:get, "http://api.locu.com/v1_0/venue/b81a229014d67cca4dd8/?api_key=SPEC_API_KEY&format=json").to_return(:body => <<-BODY)
-          {
-            "meta": {
-                "cache-expiry": 3600
-            },
-            "not_found": [],
-            "objects": [
-            {
-              "categories": "[]",
-              "country": "United States",
-              "cuisines": "[]",
-              "facebook_url": "",
-              "factual_id": "0ec844a5-e4ce-4c17-84d3-701cbadf791a",
-              "has_menu": false,
-              "id": "b81a229014d67cca4dd8",
-              "last_updated": null,
-              "lat": 39.960797,
-              "locality": "Camden",
-              "long": -75.08472,
-              "menus": [],
-              "name": "Frank's",
-              "open_hours": {
-                  "Friday": [],
-                  "Monday": [],
-                  "Saturday": [],
-                  "Sunday": [],
-                  "Thursday": [],
-                  "Tuesday": [],
-                  "Wednesday": []
-              },
-              "postal_code": "08105",
-              "redirected_from": null,
-              "region": "NJ",
-              "resource_uri": "/v1_0/venue/b81a229014d67cca4dd8/",
-              "similar_venues": null,
-              "street_address": "3300 River Rd.",
-              "twitter_id": "",
-              "website_url": "http://"
-            }
-            ]
-          }
-          BODY
-
           venue = locu.venues.find(venue_id)
           venue.should be_kind_of Locu::Venue
           venue.last_updated.should be_nil
         end
-
       end
-
     end
-
   end
 
   describe '#search' do
-
-    let(:locu) { Locu::Base.new 'SPEC_API_KEY' }
+    let(:locu) { Locu::Base.new SPEC_API_KEY }
 
     describe 'with a location' do
-
       describe 'which is valid' do
-
         let(:location) { [33.45504, -112.07102] }
-
-        it 'should return some results' do
-          stub_request(:get, "api.locu.com/v1_0/venue/search/?location=33.45504,-112.07102&api_key=SPEC_API_KEY&format=json").to_return(:body => <<-BODY)
-          {
-          "meta": {
-            "cache-expiry": 3600,
-            "limit": 25,
-            "next": null,
-            "offset": 0,
-            "previous": null,
-            "total_count": 2
-          },
-          "objects": [
-            {
-              "country": "United States",
-              "has_menu": true,
-              "id": "8cc455cdf4f61a6e73e2",
-              "last_updated": "2012-03-20T04:52:56",
-              "lat": 33.455666,
-              "locality": "Phoenix",
-              "long": -112.072014,
-              "name": "The Breadfruit & Rum Bar",
-              "postal_code": "85004",
-              "region": "AZ",
-              "resource_uri": "/v1_0/venue/8cc455cdf4f61a6e73e2/",
-              "street_address": "108 East Pierce St.",
-              "website_url": "http://www.thebreadfruit.com/"
-            },
-            {
-              "country": "United States",
-              "has_menu": true,
-              "id": "9cd2508687bbb3ff6a49",
-              "last_updated": "2012-07-20T13:59:15",
-              "lat": 33.455864,
-              "locality": "Phoenix",
-              "long": -112.07217,
-              "name": "Frank Murray's Turf Irish Pub",
-              "postal_code": "85004",
-              "region": "AZ",
-              "resource_uri": "/v1_0/venue/9cd2508687bbb3ff6a49/",
-              "street_address": "705 North 1st St.",
-              "website_url": "http://turfirishpub.com/"
-            }
-          ]
-        }
-          BODY
-
           venues = locu.venues.search(location: location)
           meta = venues.meta
           meta.should be_kind_of Locu::VenueSearchMetadata
@@ -340,12 +161,8 @@ describe Locu::Venue, vcr: { match_requests_on: [:host] } do
           venue_1.has_menu.should be_true
           venue_1.menus.should be_empty
         end
-
       end
-
     end
-
   end
-
 end
 
