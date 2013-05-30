@@ -1,25 +1,21 @@
+require 'active_support/core_ext/hash/slice'
+
 module Locu
-  Venue = Struct.new(:id, :name, :website_url, :has_menu, :menus, :last_updated, :cache_expiry, :resource_uri,
-                     :street_address, :locality, :region, :postal_code, :country, :lat, :long, :open_hours) do
+  class Venue
+    attrs = { :id, :name, :website_url, :has_menu, :menus, :last_updated, :cache_expiry, :resource_uri,
+      :street_address, :locality, :region, :postal_code, :country, :lat, :long, :open_hours }
+
+
+  end
+
+  Venue = Struct.new() do
 
     alias has_menu? has_menu
 
     def self.from_json(body)
-      venue = Venue.new
-      venue.id = body['id']
-      venue.name = body['name']
-      venue.website_url = body['website_url']
-      venue.has_menu = body['has_menu']
-      venue.resource_uri = body['resource_uri']
-      venue.street_address = body['street_address']
-      venue.locality = body['locality']
-      venue.region = body['region']
-      venue.postal_code = body['postal_code']
-      venue.country = body['country']
-      venue.lat = body['lat']
-      venue.long = body['long']
+      venue = Venue.new(body.slice(:id, :name, :website_url, :has_menu, :resource_uri, :street_address, :locality, :region, :postal_code, :country, :lat, :long))
 
-      venue.menus = []
+      venue[:menus] = []
       if venue.has_menu? and body['menus']
         venue.menus = body['menus'].collect do |menu|
           sections = menu['sections'].collect do |section|
@@ -37,22 +33,22 @@ module Locu
                   option_groups = subsection_content['option_groups'].collect do |option_group|
                     options = option_group['options'].collect do |option|
                       price = Money.parse(option['price'])
-                      MenuOption.new option['name'], price
+                      MenuOption.new(option['name'], price).to_h
                     end
-                    MenuOptionGroup.new option_group['text'], option_group['type'].downcase.to_sym, options
+                    MenuOptionGroup.new(option_group['text'], option_group['type'].downcase.to_sym, options).to_h
                   end
 
-                  price = Money.parse(subsection_content['price'])
-                  item = MenuItem.new(subsection_content['name'], subsection_content['description'], option_groups, price)
+                  price = Money.parse(subsection_content['price']).to_h
+                  item = MenuItem.new(subsection_content['name'], subsection_content['description'], option_groups, price).to_h
                   subsection_items << item
                 end
 
               end
-              MenuSubsection.new subsection['subsection_name'], subsection_texts, subsection_items
+              MenuSubsection.new(subsection['subsection_name'], subsection_texts, subsection_items).to_h
             end
-            MenuSection.new section['section_name'], subsections
+            MenuSection.new(section['section_name'], subsections).to_h
           end
-          Menu.new menu['menu_name'], sections
+          Menu.new(menu['menu_name'], sections).to_h
         end
       end
 
