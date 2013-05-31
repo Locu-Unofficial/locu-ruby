@@ -1,13 +1,8 @@
 require 'spec_helper'
 
 describe Locu::Venue, vcr: { match_requests_on: [:host] } do
-  before do
-    VCR.insert_cassette 'venue', :record => :new_episodes
-  end
-
-  after do
-    VCR.eject_cassette
-  end
+  before { VCR.insert_cassette 'venue', :record => :new_episodes }
+  after { VCR.eject_cassette }
 
   let(:locu) { Locu::Base.new SPEC_API_KEY }
 
@@ -15,93 +10,112 @@ describe Locu::Venue, vcr: { match_requests_on: [:host] } do
     describe 'a single valid venue id' do
       describe 'with a menu' do
         let(:venue_id) { '9cd2508687bbb3ff6a49' }
+        let(:venue) { locu.venues.find(venue_id) }
 
-        it 'should return a Venue with a menu' do
-          venue = locu.venues.find(venue_id)
-          venue.should be_kind_of Locu::Venue
+        describe 'venue attributes' do
+          it { venue.should be_kind_of Locu::Venue }
+          it { venue.id.should eql venue_id }
+          it { venue.name.should eql "The Turf Restaurant and Pub" }
+          it { venue.website_url.should eql 'http://theturfpub.com' }
+          it { venue.has_menu?.should be_true }
+          it { venue.should have(1).menus }
+          it { venue.resource_uri.should eql '/v1_0/venue/9cd2508687bbb3ff6a49/' }
+          it { venue.street_address.should eql '705 N. 1st St.' }
+          it { venue.locality.should eql 'Phoenix' }
+          it { venue.region.should eql 'AZ' }
+          it { venue.postal_code.should eql '85004' }
+          it { venue.country.should eql 'United States' }
+          it { venue.lat.should eql 33.455863 }
+          it { venue.long.should eql(-112.07243357) }
+        end
 
-          venue.id.should eql venue_id
-          venue.name.should eql "The Turf Restaurant and Pub"
-          venue.website_url.should eql 'http://theturfpub.com'
-          venue.has_menu?.should be_true
-          venue.should have(1).menus
-          venue.resource_uri.should eql '/v1_0/venue/9cd2508687bbb3ff6a49/'
-          venue.street_address.should eql '705 N. 1st St.'
-          venue.locality.should eql 'Phoenix'
-          venue.region.should eql 'AZ'
-          venue.postal_code.should eql '85004'
-          venue.country.should eql 'United States'
-          venue.lat.should eql 33.455863
-          venue.long.should eql(-112.07243357)
+        describe "menu" do
+          let(:menu) { venue.menus.first }
 
-          menu = venue.menus.first
-          menu.should be_kind_of Locu::Menu
-          menu.name.should eql 'Menu'
-          menu.should have(10).sections
-          section = menu.sections.first
-          section.should be_kind_of Locu::MenuSection
-          #section.name.should eql "Breakfast Fare "
-          section.should have(2).subsections
-          subsection = section.subsections.first
-          subsection.should be_kind_of Locu::MenuSubsection
-          subsection.name.should be_empty
-          subsection.should have(1).texts
-          subsection.texts.first.should eql 'Served Saturdays, Sundays 8 a.m.- 1 p.m.'
-          subsection.should have(6).items
-          item_1 = subsection.items.first
-          item_1.should be_kind_of Locu::MenuItem
-          item_1.description.should eql 'Three fried eggs, bacon and sausages, fried tomato, roasted potatoes and black and white pudding, served with homemade Irish soda bread and butter.'
-          item_1.name.should eql 'Traditional Irish Breakfast'
-          item_1.option_groups.should be_empty
-          item_1.price.should eql 10.95
-          item_2 = subsection.items.last
-          item_2.should have(0).option_groups
+          it { menu.should be_kind_of Locu::Menu }
+          it { menu.name.should eql 'Menu' }
+          it { menu.should have(10).sections }
+
+          describe 'sections' do
+            let(:section) { menu.sections.first }
+
+            it { section.should be_kind_of Locu::MenuSection }
+            #it { section.name.should eql "Breakfast Fare " }
+            it { section.should have(2).subsections }
+
+            describe 'subsections' do
+              let(:subsection) { section.subsections.first }
+
+              it { subsection.should be_kind_of Locu::MenuSubsection }
+              it { subsection.name.should be_empty }
+              it { subsection.should have(1).texts }
+              it { subsection.texts.first.should eql 'Served Saturdays, Sundays 8 a.m.- 1 p.m.' }
+              it { subsection.should have(6).items }
+
+              describe 'items' do
+                describe 'item 1' do
+                  let(:item_1) { subsection.items.first }
+
+                  it { item_1.should be_kind_of Locu::MenuItem }
+                  it { item_1.description.should eql 'Three fried eggs, bacon and sausages, fried tomato, roasted potatoes and black and white pudding, served with homemade Irish soda bread and butter.' }
+                  it { item_1.name.should eql 'Traditional Irish Breakfast' }
+                  it { item_1.option_groups.should be_empty }
+                  it { item_1.price.should eql 10.95 }
+                end
+
+                describe 'item 2' do
+                  let(:item_2) { subsection.items.last }
+
+                  it { item_2.should have(0).option_groups }
+                end
+              end
+            end
+          end
         end
       end
 
       describe 'without a menu' do
         let(:venue_id) { 'eb5f4e0484ed1947e31a' }
+        let(:venue) { locu.venues.find(venue_id) }
 
-        it 'should return a Venue without a menu' do
-          venue = locu.venues.find(venue_id)
-          venue.should be_kind_of Locu::Venue
+        describe 'Venue' do
+          it { venue.should be_kind_of Locu::Venue }
+          it { venue.id.should eql venue_id }
+          it { venue.name.should eql "Villa's Breakfast & Mexican" }
+          it { venue.website_url.should be_empty }
+          it { venue.has_menu?.should be_false }
+          it { venue.menus.nil?.should be_true }
+          it { venue.cache_expiry.should eql 3600 }
+          it { venue.resource_uri.should eql '/v1_0/venue/eb5f4e0484ed1947e31a/' }
+          it { venue.street_address.should eql '1925 19th St.' }
+          it { venue.locality.should eql 'Lubbock' }
+          it { venue.region.should eql 'TX' }
+          it { venue.postal_code.should eql '79401' }
+          it { venue.country.should eql 'United States' }
+          it { venue.lat.should eql 33.577686 }
+          it { venue.long.should eql(-101.858613) }
+          it { venue.should have(7).open_hours }
 
-          venue.id.should eql venue_id
-          venue.name.should eql "Villa's Breakfast & Mexican"
-          venue.website_url.should be_empty
-          venue.has_menu?.should be_false
-          venue.menus.should be_empty
-          venue.cache_expiry.should eql 3600
-          venue.resource_uri.should eql '/v1_0/venue/eb5f4e0484ed1947e31a/'
-          venue.street_address.should eql '1925 19th St.'
-          venue.locality.should eql 'Lubbock'
-          venue.region.should eql 'TX'
-          venue.postal_code.should eql '79401'
-          venue.country.should eql 'United States'
-          venue.lat.should eql 33.577686
-          venue.long.should eql(-101.858613)
-          venue.should have(7).open_hours
           ['Friday', 'Monday', 'Thursday', 'Tuesday', 'Wednesday', 'Saturday', 'Sunday'].each do |dow|
-            venue.open_hours[dow].should be_empty
+            it { venue.open_hours[dow].should be_empty }
           end
         end
       end
 
       describe 'with opening hours' do
-
         let(:venue_id) { '9cd2508687bbb3ff6a49' }
+        let(:venue) { locu.venues.find(venue_id) }
 
-        it 'should return a Venue with opening hours' do
-          venue = locu.venues.find(venue_id)
-          venue.should be_kind_of Locu::Venue
+        describe 'venue opening hours' do
+          it { venue.should be_kind_of Locu::Venue }
 
-          venue.should have(7).open_hours
+          it { venue.should have(7).open_hours }
           ['Friday', 'Monday', 'Thursday', 'Tuesday', 'Wednesday'].each do |dow|
-            #venue.open_hours[dow].should have(1).item
-            #venue.open_hours[dow].first.should eql "06:00:00".."17:00:00"
+            #it { venue.open_hours[dow].should have(1).item }
+            #it { venue.open_hours[dow].first.should eql "06:00:00".."17:00:00" }
           end
           ['Saturday', 'Sunday'].each do |dow|
-            venue.open_hours[dow].should be_empty
+            it { venue.open_hours[dow].should be_empty }
           end
         end
       end
@@ -160,9 +174,48 @@ describe Locu::Venue, vcr: { match_requests_on: [:host] } do
           venue_1.should be_kind_of Locu::Venue
           venue_1.name.should eql 'The Breadfruit'
           venue_1.has_menu.should be_true
-          venue_1.menus.should be_empty
+          venue_1.menus.nil?.should be_true
         end
       end
+    end
+  end
+
+  describe '.to_hash' do
+    let(:venue_id) { '9cd2508687bbb3ff6a49' }
+    let(:venue) { locu.venues.find(venue_id) }
+
+    it { venue.to_hash.should be_a Hash }
+
+    describe 'hash contents' do
+      let(:hash_contents) { venue.to_hash }
+
+      it { hash_contents["id"].should == '9cd2508687bbb3ff6a49' }
+      it { hash_contents["name"].should == 'The Turf Restaurant and Pub' }
+      it { hash_contents["website_url"].should == 'http://theturfpub.com' }
+      it { hash_contents["has_menu"].should == true }
+      it { hash_contents["resource_uri"].should == '/v1_0/venue/9cd2508687bbb3ff6a49/' }
+      it { hash_contents["street_address"].should == '705 N. 1st St.' }
+      it { hash_contents["locality"].should == 'Phoenix' }
+      it { hash_contents["region"].should == 'AZ' }
+      it { hash_contents["postal_code"].should == '85004' }
+      it { hash_contents["country"].should == 'United States' }
+      it { hash_contents["lat"].should == 33.455863 }
+      it { hash_contents["long"].should == -112.07243357 }
+
+      it { hash_contents["menus"].should be_a Array }
+      it { hash_contents["menus"].first.should be_a Hash }
+    end
+  end
+
+  describe '.menu_to_hash' do
+    let(:venue_id) { '9cd2508687bbb3ff6a49' }
+    let(:venue) { locu.venues.find(venue_id) }
+    let(:menu) { venue.menu }
+
+    describe 'hashed menu' do
+      let(:hashed_menu) { venue.menu_to_hash(venue.menus.first) }
+
+      it { hashed_menu.should be_a Hash }
     end
   end
 end
