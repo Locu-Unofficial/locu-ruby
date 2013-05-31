@@ -1,5 +1,3 @@
-require 'active_support/core_ext/hash/slice'
-
 module Locu
   Venue = Struct.new(:id, :name, :website_url, :has_menu, :menus, :last_updated, :cache_expiry, :resource_uri,
                    :street_address, :locality, :region, :postal_code, :country, :lat, :long, :open_hours) do
