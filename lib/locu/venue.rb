@@ -77,26 +77,30 @@ module Locu
           section['subsections'].each do |subsection|
             hash[section.name][subsection.name] = []
             subsection['items'].each do |item|
-              item_flat = item.to_h
-              item_flat[:price] = item_flat[:price].to_s
-
-              if item.option_groups.size > 0
-                item_option_groups = {}
-                item.option_groups.each do |option_group|
-                  item_option_groups[option_group.text] = []
-                  option_group.options.each do |option|
-                    option_flat = option.to_h
-                    option_flat[:price] = option_flat[:price].to_s
-                    item_option_groups[option_group.text] << option_flat
-                  end
-                end
-                item_flat[:option_groups] = item_option_groups
-              end
-              hash[section.name][subsection.name] << item_flat
+              hash[section.name][subsection.name] << item_to_hash(item)
             end
           end
         end
       hash
+    end
+
+    def item_to_hash(item)
+      item_flat = item.to_h
+      item_flat[:price] = item_flat[:price].to_s
+
+      if item.option_groups.size > 0
+        item_option_groups = {}
+        item.option_groups.each do |option_group|
+          item_option_groups[option_group.text] = []
+          option_group.options.each do |option|
+            option_flat = option.to_h
+            option_flat[:price] = option_flat[:price].to_s
+            item_option_groups[option_group.text] << option_flat
+          end
+        end
+        item_flat[:option_groups] = item_option_groups
+      end
+      item_flat
     end
   end
 
