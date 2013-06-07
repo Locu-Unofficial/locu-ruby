@@ -131,6 +131,10 @@ module Locu
       response = Net::HTTP.get_response uri
       return nil unless response.kind_of? Net::HTTPOK
 
+      #remove junk from the response
+      response.body.gsub!(/^\S*\(/, "") if response.body
+      response.body.gsub!(/\)$/,"") if response.body
+
       body = JSON.parse response.body
       return nil unless body['objects'].first
 
@@ -143,6 +147,23 @@ module Locu
         venue.cache_expiry = body['meta']['cache-expiry']
         venue
       end
+    end
+
+    def find_and_return_menus_json(ids)
+      uri = URI("http://api.locu.com/v1_0/venue/#{ ids.respond_to?(:join) ? ids.join(';') : ids }/")
+      uri.query = URI.encode_www_form({ :api_key => @api_key, :format => :json })
+
+      response = Net::HTTP.get_response uri
+      return nil unless response.kind_of? Net::HTTPOK
+
+      #remove junk from the response
+      response.body.gsub!(/^\S*\(/, "") if response.body
+      response.body.gsub!(/\)$/,"") if response.body
+
+      body = JSON.parse response.body
+      return nil unless body['objects'].first
+
+      body['objects'].first['menus']
     end
 
     def search(conditions)
