@@ -6,4 +6,3 @@ require 'money'
 require 'locu/base'
 require 'locu/venue'
 require 'locu/version'
-

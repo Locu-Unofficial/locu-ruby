@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Locu::Venue, vcr: { match_requests_on: [:host] } do
-  before { VCR.insert_cassette 'venue', :record => :new_episodes }
+  before { VCR.insert_cassette 'venue', record: :new_episodes }
   after { VCR.eject_cassette }
 
   let(:locu) { Locu::Base.new SPEC_API_KEY }
@@ -15,7 +15,7 @@ describe Locu::Venue, vcr: { match_requests_on: [:host] } do
         describe 'venue attributes' do
           it { venue.should be_kind_of Locu::Venue }
           it { venue.id.should eql venue_id }
-          it { venue.name.should eql "The Turf Restaurant and Pub" }
+          it { venue.name.should eql 'The Turf Restaurant and Pub' }
           it { venue.website_url.should eql 'http://theturfpub.com' }
           it { venue.has_menu?.should be_true }
           it { venue.should have(1).menus }
@@ -29,7 +29,7 @@ describe Locu::Venue, vcr: { match_requests_on: [:host] } do
           it { venue.long.should eql(-112.07243357) }
         end
 
-        describe "menu" do
+        describe 'menu' do
           let(:menu) { venue.menus.first }
 
           it { menu.should be_kind_of Locu::Menu }
@@ -40,7 +40,7 @@ describe Locu::Venue, vcr: { match_requests_on: [:host] } do
             let(:section) { menu.sections.first }
 
             it { section.should be_kind_of Locu::MenuSection }
-            #it { section.name.should eql "Breakfast Fare " }
+            # it { section.name.should eql "Breakfast Fare " }
             it { section.should have(2).subsections }
 
             describe 'subsections' do
@@ -96,7 +96,7 @@ describe Locu::Venue, vcr: { match_requests_on: [:host] } do
           it { venue.long.should eql(-101.858613) }
           it { venue.should have(7).open_hours }
 
-          ['Friday', 'Monday', 'Thursday', 'Tuesday', 'Wednesday', 'Saturday', 'Sunday'].each do |dow|
+          %w(Friday Monday Thursday Tuesday Wednesday Saturday Sunday).each do |dow|
             it { venue.open_hours[dow].should be_empty }
           end
         end
@@ -110,11 +110,11 @@ describe Locu::Venue, vcr: { match_requests_on: [:host] } do
           it { venue.should be_kind_of Locu::Venue }
 
           it { venue.should have(7).open_hours }
-          ['Friday', 'Monday', 'Thursday', 'Tuesday', 'Wednesday'].each do |dow|
-            #it { venue.open_hours[dow].should have(1).item }
-            #it { venue.open_hours[dow].first.should eql "06:00:00".."17:00:00" }
+          %w(Friday Monday Thursday Tuesday Wednesday).each do |_dow|
+            # it { venue.open_hours[dow].should have(1).item }
+            # it { venue.open_hours[dow].first.should eql "06:00:00".."17:00:00" }
           end
-          ['Saturday', 'Sunday'].each do |dow|
+          %w(Saturday Sunday).each do |dow|
             it { venue.open_hours[dow].should be_empty }
           end
         end
@@ -125,20 +125,20 @@ describe Locu::Venue, vcr: { match_requests_on: [:host] } do
       let(:invalid_venue_id) { 'badbadbad' }
 
       it 'should return nil' do
-        stub_request(:get, "http://api.locu.com/v1_0/venue/badbadbad/?api_key=SPEC_API_KEY&format=json").to_return(:status => 404)
+        stub_request(:get, 'http://api.locu.com/v1_0/venue/badbadbad/?api_key=SPEC_API_KEY&format=json').to_return(status: 404)
         locu.venues.find(invalid_venue_id).should be_nil
       end
     end
 
     describe 'multiple venue ids' do
-      let(:valid_venue_ids) { ['eb5f4e0484ed1947e31a', '9cd2508687bbb3ff6a49'] }
+      let(:valid_venue_ids) { %w(eb5f4e0484ed1947e31a 9cd2508687bbb3ff6a49) }
       let(:invalid_venue_ids) { ['definitelynotvalid'] }
 
       it 'should return valid venues' do
         venues = locu.venues.find(valid_venue_ids + invalid_venue_ids)
         venues.count.should eql valid_venue_ids.count
-        venues.each{ |v| v.should be_kind_of Locu::Venue }
-        venues.each{ |v| valid_venue_ids.should include(v.id) }
+        venues.each { |v| v.should be_kind_of Locu::Venue }
+        venues.each { |v| valid_venue_ids.should include(v.id) }
       end
 
       describe 'with a nil last_updated' do
@@ -189,21 +189,21 @@ describe Locu::Venue, vcr: { match_requests_on: [:host] } do
     describe 'hash contents' do
       let(:hash_contents) { venue.to_hash }
 
-      it { hash_contents["id"].should == '9cd2508687bbb3ff6a49' }
-      it { hash_contents["name"].should == 'The Turf Restaurant and Pub' }
-      it { hash_contents["website_url"].should == 'http://theturfpub.com' }
-      it { hash_contents["has_menu"].should == true }
-      it { hash_contents["resource_uri"].should == '/v1_0/venue/9cd2508687bbb3ff6a49/' }
-      it { hash_contents["street_address"].should == '705 N. 1st St.' }
-      it { hash_contents["locality"].should == 'Phoenix' }
-      it { hash_contents["region"].should == 'AZ' }
-      it { hash_contents["postal_code"].should == '85004' }
-      it { hash_contents["country"].should == 'United States' }
-      it { hash_contents["lat"].should == 33.455863 }
-      it { hash_contents["long"].should == -112.07243357 }
+      it { hash_contents['id'].should == '9cd2508687bbb3ff6a49' }
+      it { hash_contents['name'].should == 'The Turf Restaurant and Pub' }
+      it { hash_contents['website_url'].should == 'http://theturfpub.com' }
+      it { hash_contents['has_menu'].should == true }
+      it { hash_contents['resource_uri'].should == '/v1_0/venue/9cd2508687bbb3ff6a49/' }
+      it { hash_contents['street_address'].should == '705 N. 1st St.' }
+      it { hash_contents['locality'].should == 'Phoenix' }
+      it { hash_contents['region'].should == 'AZ' }
+      it { hash_contents['postal_code'].should == '85004' }
+      it { hash_contents['country'].should == 'United States' }
+      it { hash_contents['lat'].should == 33.455863 }
+      it { hash_contents['long'].should == -112.07243357 }
 
-      it { hash_contents["menus"].should be_a Array }
-      it { hash_contents["menus"].first.should be_a Hash }
+      it { hash_contents['menus'].should be_a Array }
+      it { hash_contents['menus'].first.should be_a Hash }
     end
   end
 
@@ -219,4 +219,3 @@ describe Locu::Venue, vcr: { match_requests_on: [:host] } do
     end
   end
 end
-
