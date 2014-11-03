@@ -7,7 +7,5 @@ module Locu
     def venues
       VenueProxy.new @api_key
     end
-
   end
 end
-

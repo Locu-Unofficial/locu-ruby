@@ -1,30 +1,18 @@
 module Locu
   Venue = Struct.new(:id, :name, :website_url, :has_menu, :menus, :last_updated, :cache_expiry, :resource_uri,
-                     :street_address, :locality, :region, :postal_code, :country, :lat, :long, :open_hours) do
+                     :street_address, :locality, :region, :postal_code, :country, :lat, :long, :open_hours, :phone) do
+    ATTRIBUTES = %w(id name website_url has_menu resource_uri street_address locality region postal_code country lat long phone)
 
-    alias has_menu? has_menu
+    alias_method :has_menu?, :has_menu
 
     def self.from_json(body)
       venue = Venue.new
-      venue.id = body['id']
-      venue.name = body['name']
-      venue.website_url = body['website_url']
-      venue.has_menu = body['has_menu']
-      venue.last_updated = body['last_updated'] ? DateTime.parse(body['last_updated']) : nil
-      venue.resource_uri = body['resource_uri']
-      venue.street_address = body['street_address']
-      venue.locality = body['locality']
-      venue.region = body['region']
-      venue.postal_code = body['postal_code']
-      venue.country = body['country']
-      venue.lat = body['lat']
-      venue.long = body['long']
+      ATTRIBUTES.each { |attribute| venue.send("#{attribute}=", body[attribute]) }
 
-      venue.menus = []
-      if venue.has_menu? and body['menus']
-        venue.menus = body['menus'].collect do |menu|
-          sections = menu['sections'].collect do |section|
-            subsections = section['subsections'].collect do |subsection|
+      if venue.has_menu? && body['menus']
+        venue.menus = body['menus'].map do |menu|
+          sections = menu['sections'].map do |section|
+            subsections = section['subsections'].map do |subsection|
 
               subsection_texts = []
               subsection_items = []
@@ -35,13 +23,16 @@ module Locu
                   subsection_texts << subsection_content['text']
 
                 when 'ITEM'
-                  option_groups = subsection_content['option_groups'].collect do |option_group|
-                    options = option_group['options'].collect do |option|
-                      MenuOption.new option['name'], Float(option['price'])
+                  option_groups = subsection_content['option_groups'].map do |option_group|
+                    options = option_group['options'].map do |option|
+                      price = Money.parse(option['price'])
+                      MenuOption.new option['name'], price
                     end
                     MenuOptionGroup.new option_group['text'], option_group['type'].downcase.to_sym, options
                   end
-                  item = MenuItem.new(subsection_content['name'], subsection_content['description'], option_groups, Float(subsection_content['price']))
+
+                  price = Money.parse(subsection_content['price'])
+                  item = MenuItem.new(subsection_content['name'], subsection_content['description'], option_groups, price)
                   subsection_items << item
                 end
 
@@ -53,25 +44,70 @@ module Locu
           Menu.new menu['menu_name'], sections
         end
       end
-
       venue.open_hours = {}
       if body['open_hours']
-        body['open_hours'].collect do |dow, hours|
-          venue.open_hours[dow] = hours.collect do |open_period|
+        body['open_hours'].map do |dow, hours|
+          venue.open_hours[dow] = hours.map do |open_period|
             open, close = open_period.split ' - '
             open..close
           end
         end
       end
-
       venue
     end
 
+    def to_hash
+      hash = {}
+      ATTRIBUTES.each { |attribute| hash[attribute] = send(attribute) }
+
+      if has_menu?
+        hash['menus'] = []
+        menus.each { |menu| hash['menus'] << menu_to_hash(menu) }
+      else
+        hash['menus'] = {}
+      end
+
+      hash
+    end
+
+    def menu_to_hash(menu)
+      hash = {}
+      menu['sections'].each do |section|
+        hash[section.name] = {}
+        section['subsections'].each do |subsection|
+          hash[section.name][subsection.name] = []
+          subsection['items'].each do |item|
+            hash[section.name][subsection.name] << item_to_hash(item)
+          end
+        end
+      end
+      hash
+    end
+
+    def item_to_hash(item)
+      item_flat = item.to_h
+      item_flat[:price] = item_flat[:price].to_s
+
+      if item.option_groups.size > 0
+        item_option_groups = {}
+        item.option_groups.each do |option_group|
+          item_option_groups[option_group.text] = []
+          option_group.options.each do |option|
+            option_flat = option.to_h
+            option_flat[:price] = option_flat[:price].to_s
+            item_option_groups[option_group.text] << option_flat
+          end
+        end
+        item_flat[:option_groups] = item_option_groups
+      end
+      item_flat
+    end
   end
 
   VenueSearchMetadata = Struct.new :cache_expiry, :limit, :next, :offset, :previous, :total_count do
     def self.from_json(body)
-      VenueSearchMetadata.new(body['cache-expiry'], body['limit'], body['next'], body['offset'], body['previous'], body['total_count'])
+      VenueSearchMetadata.new(body['cache-expiry'], body['limit'],
+                              body['next'], body['offset'], body['previous'], body['total_count'])
     end
   end
 
@@ -89,17 +125,21 @@ module Locu
 
   class VenueProxy < Base
     def find(ids)
-      uri = URI("http://api.locu.com/v1_0/venue/#{ ids.respond_to?(:join) ? ids.join(';') : ids }/")
-      uri.query = URI.encode_www_form({ :api_key => @api_key, :format => :json })
+      uri = URI("http://api.locu.com/v2_0/venue/#{ ids.respond_to?(:join) ? ids.join(';') : ids }/")
+      uri.query = URI.encode_www_form(api_key: @api_key, format: :json)
 
       response = Net::HTTP.get_response uri
-      return nil unless response.kind_of? Net::HTTPOK
+      return nil unless response.is_a? Net::HTTPOK
+
+      # remove junk from the response
+      response.body.gsub!(/^\S*\(/, '') if response.body
+      response.body.gsub!(/\)$/, '') if response.body
 
       body = JSON.parse response.body
       return nil unless body['objects'].first
 
-      if ids.kind_of? Array
-        venues = body['objects'].collect { |json| Venue.from_json json }
+      if ids.is_a? Array
+        venues = body['objects'].map { |json| Venue.from_json json }
         venues.extend(AddMeta).meta = VenueSearchMetadata.from_json body['meta']
         venues
       else
@@ -109,24 +149,39 @@ module Locu
       end
     end
 
+    def find_and_return_menus_json(ids)
+      uri = URI("http://api.locu.com/v2_0/venue/#{ ids.respond_to?(:join) ? ids.join(';') : ids }/")
+      uri.query = URI.encode_www_form(api_key: @api_key, format: :json)
+
+      response = Net::HTTP.get_response uri
+      return nil unless response.is_a? Net::HTTPOK
+
+      # remove junk from the response
+      response.body.gsub!(/^\S*\(/, '') if response.body
+      response.body.gsub!(/\)$/, '') if response.body
+
+      body = JSON.parse response.body
+      return nil unless body['objects'].first
+
+      body['objects'].first['menus']
+    end
+
     def search(conditions)
-      raise ArgumentError.new 'search conditions should be passed as a hash' unless conditions.kind_of? Hash
+      fail ArgumentError.new 'search conditions should be passed as a hash' unless conditions.is_a? Hash
 
       location, bounds = conditions[:location], conditions[:bounds]
-      conditions[:location] = "#{location[0]},#{location[1]}" if location.kind_of? Array
-      conditions[:bounds] = "#{bounds[0]}#{bounds[1]}|#{bounds[2]},#{bounds[3]}" if bounds.kind_of? Array
+      conditions[:location] = "#{location[0]},#{location[1]}" if location.is_a? Array
+      conditions[:bounds] = "#{bounds[0]}#{bounds[1]}|#{bounds[2]},#{bounds[3]}" if bounds.is_a? Array
 
-      uri = URI("http://api.locu.com/v1_0/venue/search/")
-      uri.query = URI.encode_www_form conditions.merge({ :api_key => @api_key, :format => :json })
+      uri = URI('http://api.locu.com/v2_0/venue/search/')
+      uri.query = URI.encode_www_form conditions.merge(api_key: @api_key, format: :json)
 
       response = Net::HTTP.get_response uri
       body = JSON.parse response.body
 
-      venues = body['objects'].collect { |json| Venue.from_json json }
+      venues = body['objects'].map { |json| Venue.from_json json }
       venues.extend(AddMeta).meta = VenueSearchMetadata.from_json body['meta']
       venues
     end
   end
-
 end
-
