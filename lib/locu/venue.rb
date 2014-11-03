@@ -125,7 +125,7 @@ module Locu
 
   class VenueProxy < Base
     def find(ids)
-      uri = URI("http://api.locu.com/v1_0/venue/#{ ids.respond_to?(:join) ? ids.join(';') : ids }/")
+      uri = URI("http://api.locu.com/v2_0/venue/#{ ids.respond_to?(:join) ? ids.join(';') : ids }/")
       uri.query = URI.encode_www_form(api_key: @api_key, format: :json)
 
       response = Net::HTTP.get_response uri
@@ -150,7 +150,7 @@ module Locu
     end
 
     def find_and_return_menus_json(ids)
-      uri = URI("http://api.locu.com/v1_0/venue/#{ ids.respond_to?(:join) ? ids.join(';') : ids }/")
+      uri = URI("http://api.locu.com/v2_0/venue/#{ ids.respond_to?(:join) ? ids.join(';') : ids }/")
       uri.query = URI.encode_www_form(api_key: @api_key, format: :json)
 
       response = Net::HTTP.get_response uri
@@ -173,7 +173,7 @@ module Locu
       conditions[:location] = "#{location[0]},#{location[1]}" if location.is_a? Array
       conditions[:bounds] = "#{bounds[0]}#{bounds[1]}|#{bounds[2]},#{bounds[3]}" if bounds.is_a? Array
 
-      uri = URI('http://api.locu.com/v1_0/venue/search/')
+      uri = URI('http://api.locu.com/v2_0/venue/search/')
       uri.query = URI.encode_www_form conditions.merge(api_key: @api_key, format: :json)
 
       response = Net::HTTP.get_response uri
